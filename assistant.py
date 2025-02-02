@@ -1,15 +1,20 @@
 from api.imap_api import fetch_emails
 from api.openai_api import OpenAIClient
+from api.tmanager_api import check_availability
 
 
 emails = fetch_emails()
 
 for email_data in emails:
-    print(f"Absender: {email_data['From']}")
-    print(f"Betreff: {email_data['Subject']}")
-    print(
-        f"Inhalt: {email_data['Body'][:100]}..."
-    )  # Zeige nur die ersten 100 Zeichen des Inhalts
+
+    # extract dates and flat name
+    print("bla")
+
+    # check availability
+
+    # create response
+
+    # move response to drafts folder
 
 
 # client = OpenAIClient()

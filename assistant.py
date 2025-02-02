@@ -12,6 +12,6 @@ for email_data in emails:
     )  # Zeige nur die ersten 100 Zeichen des Inhalts
 
 
-client = OpenAIClient()
-response = client.call_openai("write a haiku about ai")
-print(response)
+# client = OpenAIClient()
+# response = client.call_openai("write a haiku about ai")
+# print(response)

@@ -4,6 +4,8 @@ from email.header import decode_header
 from dotenv import load_dotenv
 import os
 
+from service import preprocessing
+
 # Lade Umgebungsvariablen
 load_dotenv()
 
@@ -40,48 +42,23 @@ def fetch_emails():
                         msg = email.message_from_bytes(response_part[1])
 
                         # Dekodiere den Absender
-                        From = decode_header(msg.get("From"))[0][0]
-                        if isinstance(From, bytes):
-                            From = From.decode()
+                        email_sender = decode_header(msg.get("From"))[0][0]
+                        if isinstance(email_sender, bytes):
+                            email_sender = email_sender.decode()
 
                         # Dekodiere den Betreff
-                        Subject = decode_header(msg.get("Subject"))[0][0]
-                        if isinstance(Subject, bytes):
-                            Subject = Subject.decode()
+                        email_subject = decode_header(msg.get("Subject"))[0][0]
+                        if isinstance(email_subject, bytes):
+                            email_subject = email_subject.decode()
 
-                        # Füge die E-Mail in die Liste ein
-                        # Initialisiere das E-Mail-Dictionary
+                        # Holen Sie sich den E-Mail-Inhalt
+                        email_content = preprocessing.get_email_content(msg)
+
                         email_data = {
-                            "From": From,
-                            "Subject": Subject,
-                            "Body": None,
+                            "From": email_sender,
+                            "Subject": email_subject,
+                            "Body": email_content,
                         }
-
-                        # Überprüfe, ob die E-Mail mehrere Teile hat
-                        if msg.is_multipart():
-                            for part in msg.walk():
-                                # Ignoriere Anhänge und berücksichtige nur Text/HTML-Teile
-                                if part.get_content_type() in [
-                                    "text/plain",
-                                    "text/html",
-                                ]:
-                                    try:
-                                        email_data["Body"] = part.get_payload(
-                                            decode=True
-                                        ).decode(part.get_content_charset())
-                                        break
-                                    except Exception as e:
-                                        print(
-                                            f"Fehler beim Dekodieren des E-Mail-Inhalts: {e}"
-                                        )
-                        else:
-                            # Wenn die E-Mail nicht multipart ist
-                            try:
-                                email_data["Body"] = msg.get_payload(
-                                    decode=True
-                                ).decode(msg.get_content_charset())
-                            except Exception as e:
-                                print(f"Fehler beim Dekodieren des E-Mail-Inhalts: {e}")
 
                         # Füge die E-Mail in die Liste ein
                         emails.append(email_data)
